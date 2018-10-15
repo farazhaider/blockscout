@@ -22,7 +22,10 @@ defmodule Explorer.Chain.InternalTransactionTest do
           trace_address: [0, 1],
           transaction_hash: transaction.hash,
           type: "call",
-          value: 100
+          value: 100,
+          block_number: 35,
+          transaction_index: 0,
+          transaction_block_number: 35
         })
 
       assert changeset.valid?

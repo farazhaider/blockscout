@@ -81,7 +81,9 @@ defmodule BlockScoutWeb.AddressInternalTransactionControllerTest do
             :internal_transaction,
             transaction: transaction_1,
             from_address: address,
-            index: index
+            index: index,
+            transaction_index: transaction_1.index,
+            transaction_block_number: transaction_1.block_number
           )
         end)
         |> Enum.map(&"#{&1.transaction_hash}.#{&1.index}")
@@ -93,7 +95,9 @@ defmodule BlockScoutWeb.AddressInternalTransactionControllerTest do
             :internal_transaction,
             transaction: transaction_2,
             from_address: address,
-            index: index
+            index: index,
+            transaction_index: transaction_2.index,
+            transaction_block_number: transaction_2.block_number
           )
         end)
         |> Enum.map(&"#{&1.transaction_hash}.#{&1.index}")
@@ -105,7 +109,9 @@ defmodule BlockScoutWeb.AddressInternalTransactionControllerTest do
             :internal_transaction,
             transaction: transaction_3,
             from_address: address,
-            index: index
+            index: index,
+            transaction_index: transaction_3.index,
+            transaction_block_number: transaction_3.block_number
           )
         end)
         |> Enum.map(&"#{&1.transaction_hash}.#{&1.index}")
@@ -114,7 +120,13 @@ defmodule BlockScoutWeb.AddressInternalTransactionControllerTest do
 
       %InternalTransaction{index: index} =
         :internal_transaction
-        |> insert(transaction: transaction_3, from_address: address, index: 11)
+        |> insert(
+          transaction: transaction_3,
+          from_address: address,
+          index: 11,
+          transaction_index: transaction_3.index,
+          transaction_block_number: transaction_3.block_number
+        )
 
       conn =
         get(conn, address_internal_transaction_path(BlockScoutWeb.Endpoint, :index, address.hash), %{

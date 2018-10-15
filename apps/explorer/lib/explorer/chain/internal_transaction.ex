@@ -62,6 +62,8 @@ defmodule Explorer.Chain.InternalTransaction do
     field(:trace_address, {:array, :integer})
     field(:type, Type)
     field(:value, Wei)
+    field(:transaction_block_number, :integer)
+    field(:transaction_index, :integer)
 
     timestamps()
 
@@ -112,7 +114,10 @@ defmodule Explorer.Chain.InternalTransaction do
       ...>     trace_address: [],
       ...>     transaction_hash: "0x3a3eb134e6792ce9403ea4188e5e79693de9e4c94e499db132be086400da79e6",
       ...>     type: "create",
-      ...>     value: 0
+      ...>     value: 0,
+      ...>     block_number: 35,
+      ...>     transaction_index: 0,
+      ...>     transaction_block_number: 35
       ...>   }
       ...> )
       iex> changeset.valid?
@@ -150,7 +155,10 @@ defmodule Explorer.Chain.InternalTransaction do
       ...>     trace_address: [],
       ...>     transaction_hash: "0x3c624bb4852fb5e35a8f45644cec7a486211f6ba89034768a2b763194f22f97d",
       ...>     type: "create",
-      ...>     value: 0
+      ...>     value: 0,
+      ...>     block_number: 35,
+      ...>     transaction_index: 0,
+      ...>     transaction_block_number: 35
       ...>   }
       iex> )
       iex> changeset.valid?
@@ -176,7 +184,10 @@ defmodule Explorer.Chain.InternalTransaction do
       ...>     trace_address: [],
       ...>     transaction_hash: "0x3a3eb134e6792ce9403ea4188e5e79693de9e4c94e499db132be086400da79e6",
       ...>     type: "call",
-      ...>     value: 0
+      ...>     value: 0,
+      ...>     block_number: 35,
+      ...>     transaction_index: 0,
+      ...>     transaction_block_number: 35
       ...>   }
       ...> )
       iex> changeset.valid?
@@ -196,7 +207,10 @@ defmodule Explorer.Chain.InternalTransaction do
       ...>     trace_address: [],
       ...>     transaction_hash: "0xcd7c15dbbc797722bef6e1d551edfd644fc7f4fb2ccd6a7947b2d1ade9ed140b",
       ...>     type: "call",
-      ...>     value: 10000000000000000
+      ...>     value: 10000000000000000,
+      ...>     block_number: 35,
+      ...>     transaction_index: 0,
+      ...>     transaction_block_number: 35
       ...>   }
       ...> )
       iex> changeset.valid?
@@ -219,7 +233,10 @@ defmodule Explorer.Chain.InternalTransaction do
       ...>     trace_address: [],
       ...>     transaction_hash: "0xcd7c15dbbc797722bef6e1d551edfd644fc7f4fb2ccd6a7947b2d1ade9ed140b",
       ...>     type: "call",
-      ...>     value: 10000000000000000
+      ...>     value: 10000000000000000,
+      ...>     block_number: 35,
+      ...>     transaction_index: 0,
+      ...>     transaction_block_number: 35
       ...>   }
       ...> )
       iex> changeset.valid?
@@ -243,7 +260,10 @@ defmodule Explorer.Chain.InternalTransaction do
       ...>     trace_address: [],
       ...>     transaction_hash: "0xcd7c15dbbc797722bef6e1d551edfd644fc7f4fb2ccd6a7947b2d1ade9ed140b",
       ...>     type: "call",
-      ...>     value: 10000000000000000
+      ...>     value: 10000000000000000,
+      ...>     block_number: 35,
+      ...>     transaction_index: 0,
+      ...>     transaction_block_number: 35
       ...>   }
       ...> )
       iex> changeset.valid?
@@ -271,7 +291,10 @@ defmodule Explorer.Chain.InternalTransaction do
       ...>     trace_address: [],
       ...>     transaction_hash: "0x3c624bb4852fb5e35a8f45644cec7a486211f6ba89034768a2b763194f22f97d",
       ...>     type: "create",
-      ...>     value: 0
+      ...>     value: 0,
+      ...>     block_number: 35,
+      ...>     transaction_index: 0,
+      ...>     transaction_block_number: 35
       ...>   }
       iex> )
       iex> changeset.valid?
@@ -295,7 +318,10 @@ defmodule Explorer.Chain.InternalTransaction do
       ...>     trace_address: [],
       ...>     transaction_hash: "0x3a3eb134e6792ce9403ea4188e5e79693de9e4c94e499db132be086400da79e6",
       ...>     type: "create",
-      ...>     value: 0
+      ...>     value: 0,
+      ...>     block_number: 35,
+      ...>     transaction_index: 0,
+      ...>     transaction_block_number: 35
       ...>   }
       ...> )
       iex> changeset.valid?
@@ -318,7 +344,10 @@ defmodule Explorer.Chain.InternalTransaction do
       ...>     trace_address: [0],
       ...>     transaction_hash: "0xb012b8c53498c669d87d85ed90f57385848b86d3f44ed14b2784ec685d6fda98",
       ...>     type: "suicide",
-      ...>     value: 0
+      ...>     value: 0,
+      ...>     block_number: 35,
+      ...>     transaction_index: 1,
+      ...>     transaction_block_number: 35
       ...>   }
       ...> )
       iex> changeset.valid?
@@ -326,10 +355,18 @@ defmodule Explorer.Chain.InternalTransaction do
 
   """
   def changeset(%__MODULE__{} = internal_transaction, attrs \\ %{}) do
+    attrs = include_transaction_info(attrs)
+
     internal_transaction
     |> cast(attrs, ~w(type)a)
     |> validate_required(~w(type)a)
     |> type_changeset(attrs)
+  end
+
+  defp include_transaction_info(attrs) do
+    attrs
+    |> Map.put_new(:transaction_index, Map.get(attrs, :index))
+    |> Map.put_new(:transaction_block_number, Map.get(attrs, :block_number))
   end
 
   defp type_changeset(changeset, attrs) do
@@ -338,7 +375,7 @@ defmodule Explorer.Chain.InternalTransaction do
     type_changeset(changeset, attrs, type)
   end
 
-  @call_optional_fields ~w(error gas_used output)
+  @call_optional_fields ~w(error gas_used output transaction_block_number transaction_index)
   @call_required_fields ~w(call_type from_address_hash gas index to_address_hash trace_address transaction_hash value)a
   @call_allowed_fields @call_optional_fields ++ @call_required_fields
 
@@ -353,7 +390,7 @@ defmodule Explorer.Chain.InternalTransaction do
     |> unique_constraint(:index)
   end
 
-  @create_optional_fields ~w(error created_contract_code created_contract_address_hash gas_used)
+  @create_optional_fields ~w(error created_contract_code created_contract_address_hash gas_used transaction_block_number transaction_index)
   @create_required_fields ~w(from_address_hash gas index init trace_address transaction_hash value)a
   @create_allowed_fields @create_optional_fields ++ @create_required_fields
 
@@ -368,8 +405,9 @@ defmodule Explorer.Chain.InternalTransaction do
     |> unique_constraint(:index)
   end
 
+  @suicide_optional_fields ~w(transaction_block_number transaction_index)
   @suicide_required_fields ~w(from_address_hash index to_address_hash trace_address transaction_hash type value)a
-  @suicide_allowed_fields @suicide_required_fields
+  @suicide_allowed_fields @suicide_optional_fields ++ @suicide_required_fields
 
   defp type_changeset(changeset, attrs, :suicide) do
     changeset
