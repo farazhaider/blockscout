@@ -1234,7 +1234,7 @@ defmodule Explorer.ChainTest do
 
       %InternalTransaction{id: first_id} =
         insert(:internal_transaction,
-          index: 0,
+          index: 1,
           transaction: transaction,
           to_address: address,
           transaction_index: transaction.index,
@@ -1243,14 +1243,18 @@ defmodule Explorer.ChainTest do
 
       %InternalTransaction{id: second_id} =
         insert(:internal_transaction,
-          index: 1,
+          index: 2,
           transaction: transaction,
           to_address: address,
           transaction_index: transaction.index,
           transaction_block_number: transaction.block_number
         )
 
-      result = address |> Chain.address_to_internal_transactions() |> Enum.map(& &1.id)
+      result =
+        address
+        |> Chain.address_to_internal_transactions()
+        |> Enum.map(& &1.id)
+
       assert Enum.member?(result, first_id)
       assert Enum.member?(result, second_id)
     end
@@ -1312,7 +1316,7 @@ defmodule Explorer.ChainTest do
           :internal_transaction,
           transaction: pending_transaction,
           to_address: address,
-          index: 0,
+          index: 1,
           transaction_index: pending_transaction.index,
           transaction_block_number: pending_transaction.block_number
         )
@@ -1322,7 +1326,7 @@ defmodule Explorer.ChainTest do
           :internal_transaction,
           transaction: pending_transaction,
           to_address: address,
-          index: 1,
+          index: 2,
           transaction_index: pending_transaction.index,
           transaction_block_number: pending_transaction.block_number
         )
@@ -1339,7 +1343,7 @@ defmodule Explorer.ChainTest do
           :internal_transaction,
           transaction: first_a_transaction,
           to_address: address,
-          index: 0,
+          index: 1,
           transaction_index: first_a_transaction.index,
           transaction_block_number: first_a_transaction.block_number
         )
@@ -1349,7 +1353,7 @@ defmodule Explorer.ChainTest do
           :internal_transaction,
           transaction: first_a_transaction,
           to_address: address,
-          index: 1,
+          index: 2,
           transaction_index: first_a_transaction.index,
           transaction_block_number: first_a_transaction.block_number
         )
@@ -1364,7 +1368,7 @@ defmodule Explorer.ChainTest do
           :internal_transaction,
           transaction: second_a_transaction,
           to_address: address,
-          index: 0,
+          index: 1,
           transaction_index: second_a_transaction.index,
           transaction_block_number: second_a_transaction.block_number
         )
@@ -1374,7 +1378,7 @@ defmodule Explorer.ChainTest do
           :internal_transaction,
           transaction: second_a_transaction,
           to_address: address,
-          index: 1,
+          index: 2,
           transaction_index: second_a_transaction.index,
           transaction_block_number: second_a_transaction.block_number
         )
@@ -1391,7 +1395,7 @@ defmodule Explorer.ChainTest do
           :internal_transaction,
           transaction: first_b_transaction,
           to_address: address,
-          index: 0,
+          index: 1,
           transaction_index: first_b_transaction.index,
           transaction_block_number: first_b_transaction.block_number
         )
@@ -1401,7 +1405,7 @@ defmodule Explorer.ChainTest do
           :internal_transaction,
           transaction: first_b_transaction,
           to_address: address,
-          index: 1,
+          index: 2,
           transaction_index: first_b_transaction.index,
           transaction_block_number: first_b_transaction.block_number
         )
@@ -1423,7 +1427,7 @@ defmodule Explorer.ChainTest do
         :internal_transaction,
         transaction: pending_transaction,
         to_address: address,
-        index: 0,
+        index: 1,
         transaction_index: pending_transaction.index
       )
 
@@ -1431,7 +1435,7 @@ defmodule Explorer.ChainTest do
         :internal_transaction,
         transaction: pending_transaction,
         to_address: address,
-        index: 1,
+        index: 2,
         transaction_index: pending_transaction.index
       )
 
@@ -1447,7 +1451,7 @@ defmodule Explorer.ChainTest do
           :internal_transaction,
           transaction: first_a_transaction,
           to_address: address,
-          index: 0,
+          index: 1,
           transaction_index: first_a_transaction.index,
           transaction_block_number: first_a_transaction.block_number
         )
@@ -1457,7 +1461,7 @@ defmodule Explorer.ChainTest do
           :internal_transaction,
           transaction: first_a_transaction,
           to_address: address,
-          index: 1,
+          index: 2,
           transaction_index: first_a_transaction.index,
           transaction_block_number: first_a_transaction.block_number
         )
@@ -1472,7 +1476,7 @@ defmodule Explorer.ChainTest do
           :internal_transaction,
           transaction: second_a_transaction,
           to_address: address,
-          index: 0,
+          index: 1,
           transaction_index: second_a_transaction.index,
           transaction_block_number: second_a_transaction.block_number
         )
@@ -1482,7 +1486,7 @@ defmodule Explorer.ChainTest do
           :internal_transaction,
           transaction: second_a_transaction,
           to_address: address,
-          index: 1,
+          index: 2,
           transaction_index: second_a_transaction.index,
           transaction_block_number: second_a_transaction.block_number
         )
@@ -1499,7 +1503,7 @@ defmodule Explorer.ChainTest do
           :internal_transaction,
           transaction: first_b_transaction,
           to_address: address,
-          index: 0,
+          index: 1,
           transaction_index: first_b_transaction.index,
           transaction_block_number: first_b_transaction.block_number
         )
@@ -1509,7 +1513,7 @@ defmodule Explorer.ChainTest do
           :internal_transaction,
           transaction: first_b_transaction,
           to_address: address,
-          index: 1,
+          index: 2,
           transaction_index: first_b_transaction.index,
           transaction_block_number: first_b_transaction.block_number
         )
@@ -1524,7 +1528,7 @@ defmodule Explorer.ChainTest do
                |> Enum.map(& &1.id)
 
       # block number ==, transaction index ==, internal transaction index <
-      assert [fifth, fourth, third, second, first] ==
+      assert [fourth, third, second, first] ==
                address
                |> Chain.address_to_internal_transactions(
                  paging_options: %PagingOptions{key: {6000, 0, 1}, page_size: 8}
