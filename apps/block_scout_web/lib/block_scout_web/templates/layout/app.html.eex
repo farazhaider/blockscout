@@ -21,7 +21,7 @@
 
   <body>
     <div class="layout-container">
-      <%= if not Explorer.Chain.finished_indexing?() do %>
+      <%= if not (Explorer.Chain.indexed_ratio() == 1.0 and Explorer.Chain.finished_indexing?()) do %>
         <div class="alert alert-warning text-center mb-0 p-3" data-selector="indexed-status">
           <span class="loading-spinner-small mr-2">
             <span class="loading-spinner-block-1"></span>
